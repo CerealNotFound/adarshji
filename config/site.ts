@@ -1,0 +1,42 @@
+export const siteConfig = {
+  name: "Adarsh Pandey | Developer Portfolio",
+  authorName: "Adarsh Pandey",
+  username: "cerealnotfound",
+  description:
+    "Adarsh Pandey - Full-Stack Engineer | AI & Systems",
+  url: "https://adarshji.vercel.app",
+  links: {
+    twitter: "https://x.com/CerealFound",
+    github: "https://github.com/CerealNotFound",
+  },
+  ogImage: "https://adarshji.vercel.app/profile-img.jpg",
+  iconIco:
+    "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐦‍🔥</text></svg>",
+  logoIcon:
+    "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐦‍🔥</text></svg>",
+  keywords: [
+    "Adarsh Pandey",
+    "Full Stack Developer",
+    "Web Developer Portfolio",
+    "Next.js portfolio template",
+    "React portfolio template",
+    "Developer portfolio template",
+    "Portfolio website template",
+    "Next.js template",
+    "Modern portfolio website",
+    "Frontend developer portfolio",
+    "Full stack developer portfolio",
+    "Open source portfolio template",
+    "Web developer portfolio template",
+    "Responsive portfolio template",
+    "React.js portfolio",
+    "Tailwind CSS portfolio",
+    "Developer showcase template",
+    "Free portfolio template",
+    "Next.js 13 template",
+    "Shadcn UI template",
+    "Career timeline template",
+    "Portfolio with dark mode",
+    "GitHub portfolio template",
+  ],
+};
