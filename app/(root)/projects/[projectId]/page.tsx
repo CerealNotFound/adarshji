@@ -18,8 +18,6 @@ interface ProjectPageProps {
   }>;
 }
 
-const githubUsername = "namanbarkiya";
-
 export default async function Project({ params }: ProjectPageProps) {
   const { projectId } = await params;
   let project = Projects.find((val) => val.id === projectId);
