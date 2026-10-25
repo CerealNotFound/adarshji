@@ -1,25 +1,26 @@
 import "./globals.css";
 
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { Inter as FontSans } from "next/font/google";
-import localFont from "next/font/local";
+import { Geist_Mono, Mona_Sans } from "next/font/google";
 
 import { Analytics } from "@/components/common/analytics";
+import { OutlineFilters } from "@/components/common/outline-filters";
 import { ThemeProvider } from "@/components/common/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 import { ModalProvider } from "@/providers/modal-provider";
 
-const fontSans = FontSans({
+// Mona Sans has a width axis: normal for body text, expanded for display.
+const fontSans = Mona_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
+  axes: ["wdth"],
 });
 
-// Font files can be colocated inside of `pages`
-const fontHeading = localFont({
-  src: "../assets/fonts/CalSans-SemiBold.woff2",
-  variable: "--font-heading",
+const fontMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
 });
 
 interface RootLayoutProps {
@@ -74,7 +75,7 @@ export const metadata = {
   icons: {
     icon: siteConfig.iconIco,
     shortcut: siteConfig.logoIcon,
-    apple: siteConfig.logoIcon,
+    apple: "/brand/apple-touch-icon.png",
   },
   manifest: `${siteConfig.url}/site.webmanifest`,
   alternates: {
@@ -97,41 +98,30 @@ export const metadata = {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   const GA_ID = process.env.NEXT_PUBLIC_GOOGLE_MEASUREMENT_ID;
-  if (!GA_ID) {
-    throw new Error("Missing Google Analytics ID");
-  }
 
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "min-h-screen bg-transparent font-sans text-ink antialiased",
           fontSans.variable,
-          fontHeading.variable
+          fontMono.variable
         )}
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
-          themes={[
-            "light",
-            "dark",
-            "retro",
-            "cyberpunk",
-            "paper",
-            "aurora",
-            "synthwave",
-          ]}
+          forcedTheme="dark"
+          enableSystem={false}
         >
+          <OutlineFilters />
           {children}
           <Analytics />
           <Toaster />
           <ModalProvider />
         </ThemeProvider>
       </body>
-      <GoogleAnalytics gaId={GA_ID} />
+      {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
     </html>
   );
 }

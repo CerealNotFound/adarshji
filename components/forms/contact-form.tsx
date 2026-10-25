@@ -59,7 +59,7 @@ export function ContactForm() {
 
       if (response.status === 200) {
         storeModal.onOpen({
-          title: "Thankyou!",
+          title: "Thank you!",
           description:
             "Your message has been received! I appreciate your contact and will get back to you shortly.",
           icon: Icons.successAnimated,
@@ -81,9 +81,9 @@ export function ContactForm() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.08em] text-ink/55">Name</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your name" {...field} />
+                <Input placeholder="What should I call you?" className="h-12 rounded-none border-0 border-b border-ink/20 bg-transparent px-0 text-[18px] placeholder:text-ink/30 focus-visible:border-ember focus-visible:ring-0 focus-visible:ring-offset-0" {...field} />
               </FormControl>
               {/* <FormDescription>
                                 This is your public display name.
@@ -97,9 +97,9 @@ export function ContactForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.08em] text-ink/55">Email</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your email" {...field} />
+                <Input placeholder="Where can I reply?" className="h-12 rounded-none border-0 border-b border-ink/20 bg-transparent px-0 text-[18px] placeholder:text-ink/30 focus-visible:border-ember focus-visible:ring-0 focus-visible:ring-offset-0" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -110,9 +110,9 @@ export function ContactForm() {
           name="message"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Message</FormLabel>
+              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.08em] text-ink/55">The problem</FormLabel>
               <FormControl>
-                <Textarea placeholder="Enter your message" {...field} />
+                <Textarea placeholder="What are you building, and what is in the way?" className="min-h-[140px] rounded-none border-0 border-b border-ink/20 bg-transparent px-0 text-[18px] placeholder:text-ink/30 focus-visible:border-ember focus-visible:ring-0 focus-visible:ring-offset-0" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -123,9 +123,9 @@ export function ContactForm() {
           name="social"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Social (optional)</FormLabel>
+              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.08em] text-ink/55">Link (optional)</FormLabel>
               <FormControl>
-                <Input placeholder="Link for social account" {...field} />
+                <Input placeholder="Your site, LinkedIn or X" className="h-12 rounded-none border-0 border-b border-ink/20 bg-transparent px-0 text-[18px] placeholder:text-ink/30 focus-visible:border-ember focus-visible:ring-0 focus-visible:ring-offset-0" {...field} />
               </FormControl>
               {/* <FormDescription>
                                 This is your public display name.
@@ -134,7 +134,13 @@ export function ContactForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button
+          type="submit"
+          disabled={form.formState.isSubmitting}
+          className="h-auto rounded-none bg-ember px-6 py-4 font-mono text-[13px] uppercase tracking-[0.08em] text-ash hover:bg-ink"
+        >
+          {form.formState.isSubmitting ? "Sending…" : "Send it →"}
+        </Button>
       </form>
     </Form>
   );

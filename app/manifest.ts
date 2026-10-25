@@ -7,20 +7,11 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Adarsh Pandey - Full-Stack Engineer | AI & Systems",
     start_url: "/",
     display: "standalone",
-    background_color: "#ffffff",
-    theme_color: "#000000",
+    background_color: "#0b0908",
+    theme_color: "#0b0908",
     icons: [
-      {
-        src: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐦‍🔥</text></svg>",
-        sizes: "64x64",
-        type: "image/png",
-      },
-      {
-        src: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐦‍🔥</text></svg>",
-        sizes: "64x64",
-        type: "image/png",
-        purpose: "maskable",
-      },
+      { src: "/brand/phoenix.svg", sizes: "any", type: "image/svg+xml" },
+      { src: "/brand/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
     categories: [
       "portfolio",

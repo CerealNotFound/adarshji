@@ -1,7 +1,7 @@
-import { MainNav } from "@/components/common/main-nav";
-import { ModeToggle } from "@/components/common/mode-toggle";
-import { SiteFooter } from "@/components/common/site-footer";
-import { routesConfig } from "@/config/routes";
+import { StageLoader } from "@/components/gl/stage-loader";
+import { Hud } from "@/components/hud/hud";
+import { Footer } from "@/components/sections/footer";
+import { SmoothScroll } from "@/providers/smooth-scroll";
 
 interface MarketingLayoutProps {
   children: React.ReactNode;
@@ -9,30 +9,13 @@ interface MarketingLayoutProps {
 
 export default function MarketingLayout({ children }: MarketingLayoutProps) {
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="container z-50 bg-background">
-        <div className="flex h-20 items-center justify-between py-6">
-          <MainNav items={routesConfig.mainNav} />
-          <nav className="flex items-center gap-5">
-            {/* <Link
-                            href={"https://github.com/namanbarkiya"}
-                            target="_blank"
-                            className={cn(
-                                buttonVariants({
-                                    variant: "ghost",
-                                    size: "sm",
-                                }),
-                                "h-8 w-8 px-0"
-                            )}
-                        >
-                            <Icons.gitHub className="w-5 h-5" />
-                        </Link> */}
-            <ModeToggle />
-          </nav>
-        </div>
-      </header>
-      <main className="container flex-1">{children}</main>
-      <SiteFooter />
-    </div>
+    <SmoothScroll>
+      <StageLoader />
+      <Hud />
+      <div className="relative z-10 flex min-h-screen flex-col">
+        <main className="flex-1">{children}</main>
+        <Footer />
+      </div>
+    </SmoothScroll>
   );
 }
