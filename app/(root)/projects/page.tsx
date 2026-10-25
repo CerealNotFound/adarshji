@@ -1,8 +1,7 @@
 import { Metadata } from "next";
 
-import PageContainer from "@/components/common/page-container";
-import ProjectCard from "@/components/projects/project-card";
-import { ResponsiveTabs } from "@/components/ui/responsive-tabs";
+import { RevealLines } from "@/components/motion/reveal";
+import { WorkBrowser } from "@/components/sections/work-browser";
 import { pagesConfig } from "@/config/pages";
 import { Projects } from "@/config/projects";
 
@@ -11,48 +10,21 @@ export const metadata: Metadata = {
   description: pagesConfig.projects.metadata.description,
 };
 
-const renderContent = (tabVal: string) => {
-  let projectArr = Projects;
-  if (tabVal === "personal") {
-    projectArr = projectArr.filter((val) => val.type === "Personal");
-  } else if (tabVal === "professional") {
-    projectArr = projectArr.filter((val) => val.type === "Professional");
-  }
-
-  return (
-    <div className="mx-auto my-4 grid justify-center gap-4 sm:grid-cols-2 lg:grid-cols-3 static">
-      {projectArr.map((project) => (
-        <ProjectCard project={project} key={project.id} />
-      ))}
-    </div>
-  );
-};
-
 export default function ProjectsPage() {
-  const tabItems = [
-    {
-      value: "all",
-      label: "All",
-      content: renderContent("all"),
-    },
-    {
-      value: "personal",
-      label: "Personal",
-      content: renderContent("personal"),
-    },
-    {
-      value: "professional",
-      label: "Professional",
-      content: renderContent("professional"),
-    },
-  ];
-
   return (
-    <PageContainer
-      title={pagesConfig.projects.title}
-      description={pagesConfig.projects.description}
-    >
-      <ResponsiveTabs items={tabItems} defaultValue="all" />
-    </PageContainer>
+    <div className="pb-[14vh]">
+      <header className="px-[var(--hud-m)] pb-14 pt-36 md:pb-20 md:pt-[22vh]">
+        <span className="mb-4 block font-mono text-[12px] uppercase tracking-[0.08em] text-ink/60 md:pl-2">
+          (Work) · {Projects.length} projects · ranked by how hard it was
+        </span>
+        <RevealLines
+          as="h1"
+          className="font-display text-[clamp(64px,15vw,260px)] uppercase leading-[0.82] md:pl-2"
+          lines={["Work"]}
+          delay={0.1}
+        />
+      </header>
+      <WorkBrowser projects={Projects} />
+    </div>
   );
 }

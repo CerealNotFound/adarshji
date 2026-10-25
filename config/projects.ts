@@ -25,12 +25,322 @@ export interface ProjectInterface {
   companyLogoImg: any;
   descriptionDetails: DescriptionDetailsInterface;
   pagesInfoArr: PagesInfoInterface[];
+  // Revamp card fields
+  coverImg?: string;
+  /** "contain" for screenshots that must never be cropped. */
+  coverFit?: "cover" | "contain";
+  coverMatte?: string;
+  tagline?: string;
+  label?: string;
 }
 
 export const Projects: ProjectInterface[] = [
   {
+    id: "thnkrr",
+    companyName: "Thnkrr",
+    type: "Professional",
+    category: ["Full Stack", "Backend", "AI"],
+    tagline: "A professional network for high-school students, safe by design.",
+    label: "Teen professional network · AI moderation",
+    shortDescription:
+      "LinkedIn for high-school students. I lead the platform rebuild: a Fastify + Postgres API, a React 19 SPA, AI moderation before anything is published, and compliance (COPPA, FERPA, DPDP) built in from the architecture up.",
+    websiteLink: "https://thnkrr.com",
+    techStack: [
+      "Typescript",
+      "Fastify",
+      "PostgreSQL",
+      "Drizzle",
+      "React",
+      "Vite",
+      "TanStack",
+      "AWS",
+      "AWS Bedrock",
+    ],
+    startDate: new Date("2026-08-29"),
+    endDate: new Date("2026-10-25"),
+    companyLogoImg: "/projects/thnkrr/logo.png",
+    coverImg: "/projects/thnkrr/cover.jpg",
+    pagesInfoArr: [
+      {
+        title: "Pre-publication moderation",
+        description:
+          "Every post, message, and profile field is checked before anyone else can see it. Our own rules screen first, then a policy model on Amazon Bedrock (retention locked off), then a human queue with named reviewers.",
+        imgArr: [],
+      },
+      {
+        title: "Guardian consent, verified by schools",
+        description:
+          "Students under 18 name a guardian. The school confirms that guardian against its own records before a consent email is ever sent.",
+        imgArr: [],
+      },
+      {
+        title: "Roles and surfaces",
+        description:
+          "Students, mentors, and educators get a feed, gamified learning, mentorship matching, appointments, messaging, and educator dashboards with PDF reports.",
+        imgArr: [],
+      },
+      {
+        title: "Sized before it scales",
+        description:
+          "Search and load were benchmarked on a pilot-sized network (9,000 students, 700 mentors, 300 educators) to choose production infrastructure before the first school.",
+        imgArr: [],
+      },
+    ],
+    descriptionDetails: {
+      paragraphs: [
+        "Thnkrr is an AI-matched mentorship, networking, and learning platform for students aged 13 to 18. As lead engineer through SingleBit, I took it from a working MVP to a platform rebuilt for scale.",
+        "Because the users are minors, compliance is the moat. COPPA, FERPA, SOPIPA, US state design codes, and India's DPDP shape the data model, the onboarding flow, and the moderation stack. Every decision is written down in a decision log with sources.",
+        "The API is Fastify + TypeScript on Postgres with Drizzle, with internal auth (argon2) and S3 media behind presigned URLs. The web app is a React 19 + Vite SPA on TanStack Router and Query.",
+      ],
+      bullets: [
+        "Rebuilt the platform end to end across 220+ commits: API, data model, SPA, and infrastructure",
+        "Designed a staged moderation pipeline that runs before publication, with all models on Amazon Bedrock",
+        "Built guardian-consent onboarding verified by schools, plus per-student privacy controls",
+        "Benchmarked search and load at pilot scale before choosing production database sizes",
+        "Wrote the architecture, safety runbook, and AWS deployment decision records",
+      ],
+    },
+  },
+  {
+    id: "aulora",
+    companyName: "Aulora",
+    type: "Personal",
+    category: ["Backend", "AI"],
+    tagline: "One terminal workspace for every Claude Code session you run.",
+    label: "Open-source Rust TUI · agent workspace",
+    shortDescription:
+      "A Rust TUI and daemon that shows which coding agents are working, which finished, and which are waiting on you, across all your projects. Claude Code runs in its panes, with Changes and Files views that mark which agent wrote each line.",
+    websiteLink: "https://github.com/CerealNotFound/aulora",
+    githubLink: "https://github.com/CerealNotFound/aulora",
+    techStack: ["Rust", "Ratatui", "Claude Code"],
+    startDate: new Date("2026-10-19"),
+    endDate: new Date("2026-10-25"),
+    companyLogoImg: "/projects/aulora/wordmark.svg",
+    coverImg: "/projects/aulora/cover.jpg",
+    coverFit: "contain",
+    coverMatte: "#0d0f14",
+    pagesInfoArr: [
+      {
+        title: "What needs you",
+        description:
+          "Permission prompts, questions, and plans waiting for review turn the agent red in the sidebar. n jumps straight to the next one.",
+        imgArr: ["/projects/aulora/overview.png"],
+      },
+      {
+        title: "What changed, and who changed it",
+        description:
+          "A source-control view with syntax-highlighted diffs and a coloured dot for the Claude session that wrote each change, read from its transcript.",
+        imgArr: ["/projects/aulora/changes.png"],
+      },
+      {
+        title: "Real terminals, owned by a daemon",
+        description:
+          "Claude Code and your shells run in panes that keep running after you close the dashboard. Each shell's status shows whether its dev server is running, crashed, or exited.",
+        imgArr: ["/projects/aulora/pane.png"],
+      },
+    ],
+    descriptionDetails: {
+      paragraphs: [
+        "If you run Claude Code in several projects at once, you end up with a VS Code window per project, mostly to hold Claude's terminal. Aulora replaces those windows with one terminal workspace that tracks every session through Claude Code's hooks.",
+        "It's a Rust workspace with a core crate (model, protocol, reducer, transcript reader), a daemon that owns the PTYs, and a Ratatui dashboard. Everything stays on your machine.",
+      ],
+      bullets: [
+        "Daemon-owned PTYs, so sessions survive closing the UI, and `aulora attach` opens any pane in another terminal",
+        "Hook-driven session state: working, waiting on permission, asking a question, or done",
+        "Changes view with per-agent attribution read from session transcripts",
+        "gitignore-aware file tree, fuzzy file finder, and ripgrep-engine search",
+        "A VS Code extension to prompt sessions running in editor terminals",
+      ],
+    },
+  },
+  {
+    id: "agentic-ads-factory",
+    companyName: "Agentic Ads Factory",
+    type: "Professional",
+    category: ["AI", "Backend"],
+    tagline: "Raw footage and a script in. A finished vertical ad out.",
+    label: "Multi-agent pipeline · footage to ad",
+    shortDescription:
+      "Two agent pipelines run by Claude Code. One turns raw talking-head footage from Google Drive into a finished 9:16 ad, rendered locally with Remotion. The other turns a script into motion-graphic b-roll clips with HyperFrames. No outside LLM APIs.",
+    techStack: [
+      "Claude Code",
+      "Remotion",
+      "HyperFrames",
+      "whisper.cpp",
+      "Typescript",
+      "Node.js",
+    ],
+    startDate: new Date("2026-06-18"),
+    endDate: new Date("2026-09-04"),
+    companyLogoImg: "/projects/agentic-ads-factory/frame-2.jpg",
+    coverImg: "/projects/agentic-ads-factory/frame-2.jpg",
+    pagesInfoArr: [
+      {
+        title: "Drive to reel",
+        description:
+          "A Drive agent pulls new footage folders. A transcription agent runs whisper.cpp locally and finds hooks and emphasis. A video-editor agent builds the edit plan and renders the reel with Remotion.",
+        imgArr: [
+          "/projects/agentic-ads-factory/frame-2.jpg",
+          "/projects/agentic-ads-factory/frame-6.jpg",
+        ],
+      },
+      {
+        title: "Script to b-roll",
+        description:
+          "A beat-selector skill splits a narration script into up to seven beats. Each beat becomes a HyperFrames composition, and each one is linted, previewed, approved by a person, then rendered to transparent WebM with a manifest for the editor.",
+        imgArr: ["/projects/agentic-ads-factory/frame-12.jpg"],
+      },
+    ],
+    descriptionDetails: {
+      paragraphs: [
+        "The ads factory turns raw creative inputs into finished short-form ads with almost no human editing. Claude Code is the orchestrator, and every agent hands off through files on disk. Subagents don't share context, so each output is an artifact, not a message.",
+        "It has made real ads for live brands, including Thnkrr's summer campaign.",
+      ],
+      bullets: [
+        "Multi-agent pipeline whose hand-offs are files on disk, so runs can be resumed and audited",
+        "Local transcription with whisper.cpp and analysis of hooks and emphasis",
+        "Data-driven Remotion edits with 9:16 renders",
+        "A HyperFrames b-roll generator with lint and validate gates, plus a human approval step before rendering",
+      ],
+    },
+  },
+  {
+    id: "pico",
+    companyName: "Pico",
+    type: "Professional",
+    category: ["AI", "Backend"],
+    tagline: "An operations manager that lives in your team's chat.",
+    label: "Chat-to-Notion ops agent · MCP",
+    shortDescription:
+      "Pico listens for the work decided in chat (meeting notes, a task thrown out mid-thread) and turns it into structured, labelled, deduplicated cards on your Notion board. It always shows what it plans to file, and you correct it by replying.",
+    githubLink: "https://github.com/CerealNotFound/pico-ticket-bot",
+    techStack: ["Python", "Claude Code", "Notion API"],
+    startDate: new Date("2026-08-04"),
+    endDate: new Date("2026-10-07"),
+    companyLogoImg: "/projects/pico/logo.svg",
+    pagesInfoArr: [],
+    descriptionDetails: {
+      paragraphs: [
+        "Pico is an agentic operations manager. An always-on gateway speaks to the chat platform (Pumble today), and a brain agent decomposes messages into Notion cards through an MCP tool surface. Chat is pluggable: swapping platforms means rewriting one directory.",
+      ],
+      bullets: [
+        "Notion OAuth so it can write to anyone's workspace",
+        "Dedupe, validation, editing, and undo before anything is filed",
+        "Shows its plan first, and takes corrections as chat replies",
+      ],
+    },
+  },
+  {
+    id: "spiral-studios",
+    companyName: "Spiral Studios",
+    type: "Professional",
+    category: ["Frontend", "UI/UX", "Web Dev"],
+    tagline: "Landing pages for a narrative film studio for deep tech.",
+    label: "Deep-tech film studio · cold-email landings",
+    shortDescription:
+      "Two conversion landing pages for Spiral, a studio that films deep-tech companies: a founder-credibility page built for cold-email traffic, and a workshop page with a hyperspace streak field drawn on canvas.",
+    websiteLink: "https://spiral-founder-credibility-landing.vercel.app",
+    techStack: ["Next.js", "React", "Typescript", "Tailwind CSS", "Framer Motion"],
+    startDate: new Date("2026-08-20"),
+    endDate: new Date("2026-09-01"),
+    companyLogoImg: "/projects/spiral/cover.jpg",
+    coverImg: "/projects/spiral/cover.jpg",
+    pagesInfoArr: [
+      {
+        title: "Founder credibility page",
+        description:
+          "Statically prerendered and built for people arriving from cold email: proof first, one clear call to book.",
+        imgArr: ["/projects/spiral/cover.jpg", "/projects/spiral/section.jpg"],
+      },
+    ],
+    descriptionDetails: {
+      paragraphs: [
+        "Spiral turns what's actually happening in labs and on factory floors into films investors watch to the end. I built two landing pages for their outbound: one to make the founder credible in seconds, one to sell a workshop.",
+      ],
+      bullets: [
+        "Statically prerendered Next.js pages, tuned for cold-email traffic",
+        "A canvas streak field calibrated against a reference frame",
+        "Motion built with Framer Motion springs, while canvas owns every pixel",
+      ],
+    },
+  },
+  {
+    id: "orbit",
+    companyName: "Orbit",
+    type: "Professional",
+    category: ["Full Stack", "Backend"],
+    tagline: "Project management for several companies working as one team.",
+    label: "Multi-company PM · row-level security",
+    shortDescription:
+      "A project-management and business-document workspace for multiple companies working together: Linear's simplicity, plus software that carries part of the project-management discipline itself.",
+    techStack: ["Typescript", "React", "Vite", "TanStack", "Fastify", "Drizzle", "PostgreSQL"],
+    startDate: new Date("2026-10-08"),
+    endDate: new Date("2026-10-25"),
+    companyLogoImg: "/projects/pico/logo.svg",
+    pagesInfoArr: [],
+    descriptionDetails: {
+      paragraphs: [
+        "Orbit is a TypeScript monorepo: a React + Vite SPA, a Fastify REST API with Better Auth and an MCP server, pg-boss background jobs, and a single authorization layer backed by Postgres row-level security.",
+      ],
+      bullets: [
+        "Multi-company workspaces with one authorization layer",
+        "Row-level security policies in Postgres, managed with Drizzle migrations",
+        "An MCP server, so agents can work inside projects",
+      ],
+    },
+  },
+  {
+    id: "hospihealth",
+    companyName: "HospiHealth",
+    type: "Professional",
+    category: ["Full Stack", "Web Dev"],
+    tagline: "A healthcare staffing site with a job portal and resume engine.",
+    label: "Healthcare hiring · PDF resume engine",
+    shortDescription:
+      "A full-stack client site with blog publishing, job-portal workflows, admin tooling, and an automated pipeline that turns applicant data into formatted PDF resumes.",
+    techStack: ["Next.js", "Typescript", "Supabase", "Tailwind CSS"],
+    // TODO(adarsh): confirm dates
+    startDate: new Date("2025-01-01"),
+    endDate: new Date("2025-06-01"),
+    companyLogoImg: "/projects/pico/logo.svg",
+    pagesInfoArr: [],
+    descriptionDetails: {
+      paragraphs: [
+        "Built through SingleBit: a public site with blog publishing and a job portal, and the admin workflows behind them.",
+      ],
+      bullets: [
+        "Admin tooling for content, job postings, and structured data export",
+        "Automated PDF resume generation from structured applicant data",
+        "Secure auth, pagination, and performance work across user and admin views",
+      ],
+    },
+  },
+  {
+    id: "arista-botanicals",
+    companyName: "Arista Botanicals",
+    type: "Professional",
+    category: ["Frontend", "Web Dev"],
+    tagline: "A launch page that collects interest straight into Google Sheets.",
+    label: "Brand launch page · Sheets signups",
+    shortDescription:
+      "A fast static landing page for a botanicals brand, with an interest form that writes straight into Google Sheets. No backend to run.",
+    techStack: ["Javascript", "HTML 5", "CSS 3"],
+    startDate: new Date("2026-10-22"),
+    endDate: new Date("2026-10-22"),
+    companyLogoImg: "/projects/pico/logo.svg",
+    pagesInfoArr: [],
+    descriptionDetails: {
+      paragraphs: [
+        "A static landing page with a Google Sheets interest integration, so the client sees signups in a sheet they already use.",
+      ],
+      bullets: ["Static and fast", "Google Sheets integration with no server"],
+    },
+  },
+  {
     id: "erwins-hire-ai",
     companyName: "Erwin's Hire AI",
+    label: "AI hiring copilot · built in 72h",
+    tagline: "An AI hiring copilot, built end to end in 72 hours.",
     type: "Personal",
     category: ["Web Dev", "Full Stack", "AI"],
     shortDescription:
@@ -41,6 +351,7 @@ export const Projects: ProjectInterface[] = [
     startDate: new Date("2024-11-01"),
     endDate: new Date("2024-11-03"),
     companyLogoImg: "/projects/erwins-hire-ai/logo.png",
+    coverImg: "/projects/erwins-hire-ai/cover.jpg",
     pagesInfoArr: [
       {
         title: "Resume Ingestion & Indexing",
@@ -105,6 +416,8 @@ export const Projects: ProjectInterface[] = [
   {
     id: "onetap",
     companyName: "OneTap",
+    label: "Gaming rewards · Valorant via Overwolf",
+    tagline: "Play games, earn rewards: a web app, desktop companion and admin.",
     type: "Professional",
     category: ["Web Dev", "Full Stack", "UI/UX"],
     shortDescription:
@@ -114,6 +427,7 @@ export const Projects: ProjectInterface[] = [
     startDate: new Date("2023-06-01"),
     endDate: new Date("2024-05-01"),
     companyLogoImg: "/projects/onetap/logo.png",
+    coverImg: "/projects/onetap/cover.jpg",
     pagesInfoArr: [
       {
         title: "Landing Web Application",
@@ -166,6 +480,8 @@ export const Projects: ProjectInterface[] = [
   {
   id: "multibrain",
   companyName: "Multibrain",
+  label: "400+ AI models · credit billing",
+  tagline: "One workspace for 400+ AI models, billed by the credit.",
   type: "Professional",
   category: ["Web Dev", "Full Stack", "AI"],
   shortDescription:
@@ -182,6 +498,7 @@ export const Projects: ProjectInterface[] = [
   startDate: new Date("2025-06-29"),
   endDate: new Date("2025-07-29"),
   companyLogoImg: "/projects/multibrain/logo.png",
+    coverImg: "/projects/multibrain/cover.jpg",
   pagesInfoArr: [
     {
       title: "Multi-Model Chat Interface",
@@ -235,6 +552,8 @@ export const Projects: ProjectInterface[] = [
   {
     id: "cloudcast",
     companyName: "CloudCast",
+    label: "Video platform · S3 + CloudFront",
+    tagline: "A video platform with signed uploads and CDN delivery.",
     type: "Personal",
     category: ["Web Dev", "Full Stack", "AWS"],
     shortDescription:
@@ -244,6 +563,7 @@ export const Projects: ProjectInterface[] = [
     startDate: new Date("2024-01-01"),
     endDate: new Date("2024-12-01"),
     companyLogoImg: "/projects/cloudcast/logo.png",
+    coverImg: "/projects/cloudcast/cover.jpg",
     pagesInfoArr: [
       {
         title: "Video Feed Interface",
@@ -293,4 +613,4 @@ export const Projects: ProjectInterface[] = [
   },
 ];
 
-export const featuredProjects = Projects.slice(0, 3);
+export const featuredProjects = Projects.slice(0, 6);

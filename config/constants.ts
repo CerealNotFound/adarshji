@@ -66,6 +66,18 @@ export type ValidSkills =
   | "Electron"
   | "Overwolf"
   | "ShadCN UI"
+  | "Rust"
+  | "Fastify"
+  | "Drizzle"
+  | "Vite"
+  | "TanStack"
+  | "Remotion"
+  | "HyperFrames"
+  | "Claude Code"
+  | "AWS Bedrock"
+  | "Notion API"
+  | "whisper.cpp"
+  | "Ratatui";
 
 export type ValidCategory =
   | "Full Stack"

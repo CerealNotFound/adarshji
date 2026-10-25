@@ -1,5 +1,7 @@
 import { MetadataRoute } from "next";
 
+import { experiences } from "@/config/experience";
+import { Projects } from "@/config/projects";
 import { siteConfig } from "@/config/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -12,6 +14,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
       priority: 1.0,
+    },
+    {
+      url: `${baseUrl}/work-with-me`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/skills`,
@@ -51,5 +59,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  return routes;
+  const details = [
+    ...Projects.map((p) => `${baseUrl}/projects/${p.id}`),
+    ...experiences.map((e) => `${baseUrl}/experience/${e.id}`),
+  ].map((url) => ({ url, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.6 }));
+
+  return [...routes, ...details];
 }

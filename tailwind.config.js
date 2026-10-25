@@ -26,6 +26,11 @@ module.exports = {
     },
     extend: {
       colors: {
+        ash: "#0b0908",
+        ink: "#f3ede6",
+        ember: "#ff5a1f",
+        flame: "#ffa24a",
+        acid: "#d4ff3a",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -62,7 +67,9 @@ module.exports = {
       },
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
-        heading: ["var(--font-heading)", ...fontFamily.sans],
+        heading: ["var(--font-display)", ...fontFamily.sans],
+        display: ["var(--font-display)", ...fontFamily.sans],
+        mono: ["var(--font-mono)", ...fontFamily.mono],
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -86,16 +93,4 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-  safelist: [
-    "dark",
-    "retro",
-    "cyberpunk",
-    "paper",
-    "aurora",
-    "synthwave",
-    {
-      pattern:
-        /^(.*?)(dark|retro|cyberpunk|paper|aurora|synthwave)([:.])(.*?)$/,
-    },
-  ],
 };
