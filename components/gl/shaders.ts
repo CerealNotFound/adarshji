@@ -149,40 +149,49 @@ export const postFrag = /* glsl */ `
   varying vec2 vUv;
   uniform sampler2D tDiffuse;
   uniform sampler2D uVelocity;
+  uniform sampler2D uDye;
   uniform vec2 uSimSize;
-  uniform float uDisplacement;
-  uniform float uChroma;
-  uniform float uGlitch;
+  uniform float uHaze;
+  uniform float uFire;
   uniform float uTime;
   uniform vec2 uResolution;
 
   float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
-  vec3 spectrum(float x) { return cos((x - vec3(0.0, 0.5, 1.0)) * vec3(0.6, 1.0, 0.5) * 3.14); }
+  float vnoise(vec2 p) {
+    vec2 i = floor(p), f = fract(p);
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y);
+  }
 
   void main() {
     vec2 uv = vUv;
-    vec2 vel = texture2D(uVelocity, uv).xy;
-    vec2 disp = vel / uSimSize * uDisplacement;
-    float mag = length(disp);
+    vec4 dye = texture2D(uDye, vUv);
+    float heat = dye.r * uFire;
+    float smoke = dye.g * uFire;
 
-    // Glitch tears: on fast strokes, horizontal bands jump sideways.
-    float band = floor(uv.y * 48.0);
-    float tear = step(0.82, hash(vec2(band, floor(uTime * 18.0)))) * smoothstep(0.18, 0.4, mag);
-    uv.x += (hash(vec2(band, floor(uTime * 24.0))) - 0.5) * 0.035 * tear * uGlitch;
+    // Heat haze: the scene shimmers only where it's hot (or smoky).
+    vec2 vel = texture2D(uVelocity, vUv).xy / uSimSize;
+    vec2 shimmer = vec2(
+      vnoise(vUv * vec2(42.0, 24.0) + vec2(0.0, -uTime * 3.0)) - 0.5,
+      vnoise(vUv * vec2(38.0, 22.0) + vec2(7.0, -uTime * 2.6)) - 0.5
+    );
+    float hot = smoothstep(0.02, 0.5, heat + smoke * 0.3);
+    uv += (vel * 0.2 + shimmer * 0.012) * hot * uHaze;
+    vec3 col = texture2D(tDiffuse, clamp(uv, 0.0, 1.0)).rgb; // linear
 
-    // Smeared, RGB-split samples along the flow.
-    vec3 col = vec3(0.0);
-    vec3 wsum = vec3(0.0);
-    for (int i = 0; i < 4; i++) {
-      float t = float(i) / 3.0;
-      vec3 w = max(vec3(0.0), cos((t - vec3(0.0, 0.5, 1.0)) * 3.14159 * 0.5));
-      col += texture2D(tDiffuse, clamp(uv - disp * 0.3 * (t + 0.3) * (1.0 + mag * 6.0), 0.0, 1.0)).rgb * w;
-      wsum += w;
-    }
-    col /= max(wsum, vec3(0.0001));
-    // Thin rainbow fringes only where the lens is strongest
-    float edge = smoothstep(0.06, 0.16, mag) * (1.0 - smoothstep(0.16, 0.4, mag));
-    col += max(spectrum(fract(mag * 9.0)), 0.0) * edge * 0.22 * uChroma;
+    // Smoke: a warm grey veil that lingers after the flames cool.
+    float sm = clamp(smoke * 1.2, 0.0, 0.72);
+    col = mix(col, vec3(0.03, 0.022, 0.018), sm * 0.5);         // darken under it
+    col += vec3(0.11, 0.09, 0.075) * smoothstep(0.04, 0.5, smoke) * 0.9; // grey, lit by the fire
+
+    // Flames: flickering, licking upward, white-hot at the core.
+    float n = vnoise(vUv * vec2(16.0, 9.0) + vec2(0.0, -uTime * 4.0)) * 0.6
+            + vnoise(vUv * vec2(44.0, 26.0) + vec2(0.0, -uTime * 7.5)) * 0.4;
+    float k = 1.0 - exp(-heat * (0.6 + 1.4 * n) * 2.0);
+    vec3 fire = mix(vec3(0.38, 0.02, 0.0), vec3(1.0, 0.3, 0.04), smoothstep(0.05, 0.45, k));
+    fire = mix(fire, vec3(1.0, 0.72, 0.25), smoothstep(0.45, 0.78, k));
+    fire = mix(fire, vec3(1.0, 0.96, 0.84), smoothstep(0.82, 0.98, k));
+    col += pow(fire, vec3(2.2)) * smoothstep(0.03, 0.35, k) * 1.2;
 
     // Film grain
     col += (hash(vUv * uResolution + fract(uTime) * 100.0) - 0.5) * 0.012;

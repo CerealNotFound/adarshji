@@ -95,10 +95,10 @@ export function Pipeline() {
         const m = mk(postFrag, {
           tDiffuse: { value: null },
           uVelocity: { value: null },
+          uDye: { value: null },
           uSimSize: { value: sim ? sim.size : new THREE.Vector2(1, 1) },
-          uDisplacement: { value: sim ? 0.55 : 0 },
-          uChroma: { value: sim ? 0.6 : 0 },
-          uGlitch: { value: sim ? 1 : 0 },
+          uHaze: { value: sim ? 1 : 0 },
+          uFire: { value: 0 },
           uTime: { value: 0 },
           uResolution: { value: new THREE.Vector2() },
         });
@@ -146,25 +146,32 @@ export function Pipeline() {
     const reduce = motionStore.reducedMotion;
     sim?.setAspect(size.width / size.height);
 
-    // Pointer → fluid splats
+    // The fire only lives in the hero: the pointer has to be over it.
+    const vh = window.innerHeight;
+    const inHero = motionStore.hero && motionStore.scroll + p.y < vh;
+
+    // Pointer → flames erupting where it moves, faster strokes burn hotter.
     if (p.moved) {
       const x = p.nx;
       const y = 1 - p.ny;
-      if (sim && S.last.x >= 0) {
-        const dx = (x - S.last.x) * 4200;
-        const dy = (y - S.last.y) * 4200;
-        if (Math.abs(dx) + Math.abs(dy) > 0.5) sim.splat(x, y, dx, dy, 0.045);
+      if (sim && inHero && S.last.x >= 0) {
+        const dx = (x - S.last.x) * 3000;
+        const dy = (y - S.last.y) * 3000;
+        const speed = Math.hypot(dx, dy);
+        if (speed > 0.5) {
+          sim.splat(x, y, dx * 0.6, dy * 0.6 + 120, 0.05);
+          sim.ignite(x, y, Math.min(0.8, 0.18 + speed / 2600), 0.14, 0.045);
+        }
       }
-      S.last = { x, y };
+      S.last = inHero ? { x, y } : { x: -1, y: -1 };
       p.moved = false;
     }
     S.mouse.lerp(new THREE.Vector2(p.nx, 1 - p.ny), 1 - Math.pow(0.02, dt));
 
-    sim?.step(dt);
+    // Backdrop and fire: only while the hero is on screen.
+    const heroFade = motionStore.hero ? 1 - Math.min(1, motionStore.scroll / (vh * 1.05)) : 0;
+    if (heroFade > 0.001) sim?.step(dt);
     S.frame++;
-
-    // Backdrop: only while the hero is on screen.
-    const heroFade = motionStore.hero ? 1 - Math.min(1, motionStore.scroll / (window.innerHeight * 1.05)) : 0;
     // On phones the slow silk only needs redrawing every other frame.
     if (heroFade > 0.001 && (!lowPower || S.frame % 2 === 0)) {
       fs.backdrop.uniforms.uTime.value = reduce ? 0 : t;
@@ -188,6 +195,8 @@ export function Pipeline() {
     const u = fs.post.uniforms;
     u.tDiffuse.value = targets.scene.texture;
     u.uVelocity.value = sim ? sim.texture : still;
+    u.uDye.value = sim ? sim.dyeTexture : still;
+    u.uFire.value = sim ? heroFade : 0;
     u.uTime.value = t;
     u.uResolution.value.set(targets.w, targets.h);
     run(fs.post, null);

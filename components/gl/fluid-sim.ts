@@ -1,10 +1,11 @@
 import * as THREE from "three";
 
 /**
- * Velocity-only GPU fluid (stable fluids, after Pavel Dobryakov's MIT-licensed
- * WebGL-Fluid-Simulation). Nothing is drawn from it directly: its velocity
- * texture displaces the rendered scene in the final pass, which is what makes
- * the cursor "push" the image around.
+ * GPU fluid for the hero's fire (stable fluids, after Pavel Dobryakov's
+ * MIT-licensed WebGL-Fluid-Simulation). Besides velocity it carries a "dye"
+ * texture: red = heat, green = smoke. Heat rises (buoyancy) and cools; what
+ * it loses turns into smoke, which lingers. The final pass paints heat as
+ * flame and smoke as a warm grey veil.
  */
 
 const vert = /* glsl */ `
@@ -118,6 +119,30 @@ const FRAG = {
       vec2 v = texture2D(uVelocity, vUv).xy - vec2(R - L, T - B);
       gl_FragColor = vec4(v, 0.0, 1.0);
     }`,
+  buoyancy: head + /* glsl */ `
+    uniform sampler2D uVelocity;
+    uniform sampler2D uDye;
+    uniform float buoyancy;
+    uniform float dt;
+    void main() {
+      vec2 v = texture2D(uVelocity, vUv).xy;
+      vec4 d = texture2D(uDye, vUv);
+      v.y += (d.r + d.g * 0.12) * buoyancy * dt; // heat rises, smoke drifts
+      gl_FragColor = vec4(v, 0.0, 1.0);
+    }`,
+  advectDye: head + /* glsl */ `
+    uniform sampler2D uVelocity;
+    uniform sampler2D uSource;
+    uniform vec2 texelSize;
+    uniform float dt;
+    uniform vec2 cooling; // x: heat loss rate, y: smoke fade rate
+    void main() {
+      vec2 coord = vUv - dt * texture2D(uVelocity, vUv).xy * texelSize;
+      vec4 d = texture2D(uSource, coord);
+      float heat = d.r / (1.0 + cooling.x * dt);
+      float smoke = (d.g + (d.r - heat) * 0.9) / (1.0 + cooling.y * dt);
+      gl_FragColor = vec4(heat, smoke, 0.0, 1.0);
+    }`,
   fade: head + /* glsl */ `
     uniform sampler2D uTexture;
     uniform float value;
@@ -149,6 +174,7 @@ function double(w: number, h: number, filter: THREE.MagnificationTextureFilter):
 export class FluidSim {
   readonly size: THREE.Vector2;
   private velocity: Double;
+  private dye: Double;
   private pressure: Double;
   private divergence: THREE.WebGLRenderTarget;
   private curlRT: THREE.WebGLRenderTarget;
@@ -167,6 +193,7 @@ export class FluidSim {
     const h = base;
     this.size = new THREE.Vector2(w, h);
     this.velocity = double(w, h, THREE.LinearFilter);
+    this.dye = double(w * 2, h * 2, THREE.LinearFilter);
     this.pressure = double(w, h, THREE.NearestFilter);
     this.divergence = target(w, h, THREE.NearestFilter);
     this.curlRT = target(w, h, THREE.NearestFilter);
@@ -182,6 +209,10 @@ export class FluidSim {
           uPressure: { value: null },
           uDivergence: { value: null },
           uCurl: { value: null },
+          uDye: { value: null },
+          uSource: { value: null },
+          buoyancy: { value: 520 },
+          cooling: { value: new THREE.Vector2(1.3, 0.32) },
           uTexture: { value: null },
           aspectRatio: { value: 1 },
           color: { value: new THREE.Vector3() },
@@ -207,6 +238,11 @@ export class FluidSim {
     return this.velocity.read.texture;
   }
 
+  /** red = heat, green = smoke */
+  get dyeTexture() {
+    return this.dye.read.texture;
+  }
+
   setAspect(a: number) {
     this.aspect = a;
   }
@@ -229,8 +265,26 @@ export class FluidSim {
     this.velocity.swap();
   }
 
+  /** Adds heat and smoke at x, y (0..1, y up). */
+  ignite(x: number, y: number, heat: number, smoke: number, radius = 0.06) {
+    const m = this.mats.splat;
+    m.uniforms.aspectRatio.value = this.aspect;
+    m.uniforms.radius.value = (radius / 100) * Math.max(1, this.aspect);
+    m.uniforms.point.value.set(x, y);
+    m.uniforms.color.value.set(heat, smoke, 0);
+    m.uniforms.uTarget.value = this.dye.read.texture;
+    this.run(m, this.dye.write);
+    this.dye.swap();
+  }
+
   step(dt: number) {
     const M = this.mats;
+    M.buoyancy.uniforms.uVelocity.value = this.velocity.read.texture;
+    M.buoyancy.uniforms.uDye.value = this.dye.read.texture;
+    M.buoyancy.uniforms.dt.value = dt;
+    this.run(M.buoyancy, this.velocity.write);
+    this.velocity.swap();
+
     M.curl.uniforms.uVelocity.value = this.velocity.read.texture;
     this.run(M.curl, this.curlRT);
 
@@ -261,13 +315,19 @@ export class FluidSim {
 
     M.advect.uniforms.uVelocity.value = this.velocity.read.texture;
     M.advect.uniforms.dt.value = dt;
-    M.advect.uniforms.dissipation.value = 3.2;
+    M.advect.uniforms.dissipation.value = 1.4;
     this.run(M.advect, this.velocity.write);
     this.velocity.swap();
+
+    M.advectDye.uniforms.uVelocity.value = this.velocity.read.texture;
+    M.advectDye.uniforms.uSource.value = this.dye.read.texture;
+    M.advectDye.uniforms.dt.value = dt;
+    this.run(M.advectDye, this.dye.write);
+    this.dye.swap();
   }
 
   dispose() {
-    [this.velocity, this.pressure].forEach((d) => {
+    [this.velocity, this.pressure, this.dye].forEach((d) => {
       d.read.dispose();
       d.write.dispose();
     });
