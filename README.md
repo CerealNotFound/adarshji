@@ -2,7 +2,7 @@
 
 The portfolio of **Adarsh Pandey**: Lead Engineer at SingleBit, building AI products, agent pipelines and the systems that keep them up.
 
-**Live:** [adarshji.vercel.app](https://adarshji.vercel.app) · **Links:** [/atlas](https://adarshji.vercel.app/atlas) · **Hire me:** [/work-with-me](https://adarshji.vercel.app/work-with-me)
+**Live:** [adarshji.com](https://adarshji.com) · **Links:** [/atlas](https://adarshji.com/atlas) · **Hire me:** [/work-with-me](https://adarshji.com/work-with-me)
 
 It's built as an art piece as much as a CV. A single WebGL layer sits behind every page; the text stays in plain HTML so the site is fast, accessible and indexable.
 

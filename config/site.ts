@@ -4,12 +4,12 @@ export const siteConfig = {
   username: "cerealnotfound",
   description:
     "Adarsh Pandey - Full-Stack Engineer | AI & Systems",
-  url: "https://adarshji.vercel.app",
+  url: "https://adarshji.com",
   links: {
     twitter: "https://x.com/CerealFound",
     github: "https://github.com/CerealNotFound",
   },
-  ogImage: "https://adarshji.vercel.app/profile-img.jpg",
+  ogImage: "https://adarshji.com/profile-img.jpg",
   iconIco: "/brand/phoenix.svg",
   logoIcon: "/brand/phoenix.svg",
   keywords: [

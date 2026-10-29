@@ -3,4 +3,4 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://adarshji.vercel.app/sitemap.xml 
+Sitemap: https://adarshji.com/sitemap.xml 
